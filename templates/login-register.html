@@ -1,0 +1,31 @@
+{% from "bootstrap/form.html" import render_form %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Login/Register</title>
+    {{ bootstrap.load_css() }}
+    {% block styles %}
+    <style>
+        .blur-bg {
+            background-image: url("./static/login-background.png");
+            background-size: cover;
+        }
+
+
+    </style>
+    {% endblock %}
+</head>
+<body class="blur-bg">
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-5 shadow-lg bg-dark text-white" style="border: 2px solid #FFA500;">
+        <img src="./static/logo.png" width="70" class="rounded-circle"/>
+        <h1 class="mb-5 text-white">{{ status }}</h1>
+
+        {{ render_form(form) }}
+    </div>
+
+
+</div>
+{{ bootstrap.load_js()}}
+</body>
+</html>

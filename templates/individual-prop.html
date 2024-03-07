@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="carouselExampleIndicators" class="carousel slide p-5 bg-dark-subtle" data-bs-ride="carousel">
+  <div class="carousel-indicators">
+    {% for url in photos %}
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ loop.index0 }}" {% if loop.first %}class="active"{% endif %} aria-current="true" aria-label="Slide {{ loop.index }}"></button>
+    {% endfor %}
+  </div>
+  <div class="carousel-inner rounded-4">
+    {% for url in photos %}
+    <div class="carousel-item {% if loop.first %}active{% endif %}">
+      <img src="{{ url['url'] }}" class="d-block mx-auto" alt="..." style="width:50%;">
+    </div>
+    {% endfor %}
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+
+
+{% endblock %}

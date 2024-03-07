@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{ bootstrap.load_css() }}
+    <title>{% block title %}{% endblock %}</title>
+    {% block scripts %}
+    {% endblock %}
+    {% block styles %}
+    <style>
+
+
+    </style>
+    {% endblock %}
+</head>
+<body {% block bodyclass %} {% endblock %}>
+<section class="bg-dark sticky-top py-2" style="border-bottom:4px solid #FFA500;">
+    <div class="container d-flex flex-wrap">
+        <ul class="nav me-auto">
+            {% if current_user.is_authenticated %}
+            <li class="nav-item"><a href="{{ url_for('user_home') }}" class="nav-link text-white-50 px-2 active"
+                                    aria-current="page">Home</a>
+            </li>
+            {% else %}
+            <li class="nav-item"><a href="{{ url_for('index') }}" class="nav-link link-body-emphasis text-white-50 px-2 active"
+                                    aria-current="page">Home</a>
+            </li>
+            {% endif %}
+            <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2 text-white">FAQs</a></li>
+            <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2 text-white">About</a></li>
+        </ul>
+        <ul class="nav">
+            {% if not current_user.is_authenticated %}
+            <li class="nav-item"><a href="{{ url_for('login') }}" class="nav-link link-body-emphasis px-2 text-white">Login</a>
+            </li>
+            <li class="nav-item"><a href="{{ url_for('register') }}" class="nav-link link-body-emphasis px-2 text-white">Sign
+
+                up</a></li>
+            {% else %}
+            <li class="nav-item"><a href="{{ url_for('logout') }}" class="nav-link link-body-emphasis px-2 text-white">Logout</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</section>
+
+
+{% block content %}
+{% endblock %}
+
+<section class="bg-dark pt-3">
+    <div class="container ">
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 border-top">
+            <div class="col-md-5 d-flex align-items-center">
+                <span class="mb-3 mb-md-0 text-white">{% block date %}{% endblock %} ValueHunter Home Picks, Inc
+                <br/>
+                Contact me by email: Quoncdavis@gmail.com  or phone: 603-714-2643</span>
+            </div>
+        </footer>
+    </div>
+</section>
+
+{{ bootstrap.load_js() }}
+</body>
+</html>

@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+{% block scripts %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+{% endblock %}
+{% block styles %}
+<style>
+    .hover-animate {
+        transition: transform 0.3s ease; /* Smooth transition for the transform */
+    }
+
+    .hover-animate:hover {
+        /* Hover state */
+        transform: scale(1.1); /* Increase the size by 10% */
+    }
+
+    .align-graph {
+        padding-left: 0;
+    }
+
+    .dropdown-item:hover {
+        background-color: rgba(255, 255, 255, 0.1); /* Light background color on hover */
+    }
+
+    .blur-bg {
+        background-image: url("blurry background.png");
+        background-size: cover;
+    }
+
+    .hover-darken {
+        text-decoration: none;
+        color: white;
+    }
+
+    .hover-darken:hover {
+        color: rgba(255, 255, 255, 0.5); /* 50% white color */
+    }
+
+</style>
+{% endblock %}
+{% block content %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="alert alert-info alert-dismissible fade show my-0" role="alert">
+            <strong class="text-danger">Error:</strong>
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endwith %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-6 col-sm-12 align-graph" style="background-color: #4a5259;">
+            <div id="heatmap-container">
+                <!-- Buttons to change displayed graph -->
+                <div class="btn-group mt-5" role="group" aria-label="Graph type">
+                    {% if graph_state == "scatter" %}
+                    <a class="text-decoration-none"
+                       href="{{ url_for('state_home',  state=state, town=town, graph_state='heatmap', sort_by=sort_by,
+                        scope=scope, page=page ) }}">
+                        <button type="button" class="btn btn-outline-dark rounded-pill px-3 mx-3">Heatmap</button>
+                    </a>
+                    <button type="button" class="btn btn-dark rounded-pill px-3 ">Scatter Plot</button>
+                    {% else %}
+                    <button type="button" class="btn btn-dark rounded-pill px-3 mx-3 ">Heatmap</button>
+                    <a class="text-decoration-none "
+                       href="{{ url_for('state_home',  state=state, town=town, graph_state='scatter', sort_by=sort_by,
+                        scope=scope, page=page ) }}">
+                        <button type="button" class="btn btn-outline-dark rounded-pill px-3 ">Scatter Plot</button>
+                    </a>
+                    {% endif %}
+                </div>
+                <div id="graph-container">
+                    {{ graph | safe }}
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-sm-12 bg-dark" style="padding: 0;">
+
+            <header class="py-3 shadow" style=" border-bottom: 3px solid #FFA500; ">
+
+                <div class="container d-flex flex-wrap justify-content-center">
+                    {% if page | int > 0 %}
+                    <a class="text-white mt-4"
+                       href="{{ url_for('state_home',  state=state, town=town, graph_state=graph_state, sort_by=sort_by,
+                        scope=scope, page=page|int - 1 ) }}">
+                        <button class=" btn btn-light rounded-circle">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-arrow-left-square" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                      d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm11.5 5.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z"/>
+                            </svg>
+                        </button>
+                    </a>
+                    {% endif %}
+                    <h4 class="text-white-50 mx-3 text-center"><a class="hover-darken" href="{{ url_for('state_home', state=state, town=town, graph_state=graph_state, sort_by=sort_by,
+                        scope=scope ) }}">{% if scope == "town" %} {{town}} {% else %} {{ state }} {% endif %}</a> <br/>
+                        Page {{ page | int + 1 }}</h4>
+                    {% if page | int * 20 <= props | length %}
+                    <a class="text-white mt-4"
+                       href="{{ url_for('state_home',  state=state, town=town, graph_state=graph_state, sort_by=sort_by,
+                        scope=scope, page=page|int + 1 ) }}">
+                        <button class=" btn btn-light rounded-circle">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-arrow-right-square" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                      d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
+                            </svg>
+                        </button>
+                    </a>
+                    {% endif %}
+                    <div class="dropdown mx-5">
+
+                        <button class="btn btn-outline-dark dropdown-toggle text-white" type="button"
+                                id="dropdownMenuButton"
+                                data-bs-toggle="dropdown" aria-expanded="false">Sort By
+                        </button>
+                        <ul class="dropdown-menu bg-dark" aria-labelledby="dropdownMenuButton">
+                            <li><a class="dropdown-item text-light"
+                                   href="{{ url_for('state_home',  state=state, town=town, graph_state=graph_state, sort_by='a|price per square foot',
+                        scope=scope ) }}">$/sqrft ⬆️</a>
+                            </li>
+                            <li><a class="dropdown-item text-light"
+                                   href="{{ url_for('state_home',  state=state, town=town, graph_state=graph_state, sort_by='d|price per square foot',
+                        scope=scope ) }}">$/sqrft ⬇️</a>
+                            </li>
+                            <li><a class="dropdown-item text-light"
+                                   href="{{ url_for('state_home',  state=state, town=town, graph_state=graph_state, sort_by='a|uf-price',
+                        scope=scope ) }}">Price ⬆️</a>
+                            </li>
+                            </li>
+                            <li><a class="dropdown-item text-light"
+                                   href="{{ url_for('state_home',  state=state, town=town, graph_state=graph_state, sort_by='d|uf-price',
+                        scope=scope ) }}">Price ⬇️</a>
+                            </li>
+                            <li><a class="dropdown-item text-light"
+                                   href="{{ url_for('state_home',  state=state, town=town, graph_state=graph_state, sort_by='u|square-footage',
+                        scope=scope ) }}">Square
+                                Footage ⬆️</a></li>
+                            <li>
+                            <li><a class="dropdown-item text-light"
+                                   href="{{ url_for('state_home',  state=state, town=town, graph_state=graph_state, sort_by='d|square-footage',
+                        scope=scope ) }}">Square
+                                Footage ⬇️</a></li>
+                            <li>
+                                <hr class="dropdown-divider bg-light">
+                            </li>
+
+                        </ul>
+                    </div>
+                    <form class="col-12 col-lg-auto mb-3 mb-lg-0" method="get"
+                          action="{{ url_for('state_home') }}">
+                        <input type="hidden" name="state" value="{{ state }}">
+                        <input type="hidden" name="graph_state" value="{{ graph_state }}">
+                        <input type="hidden" name="sort_by" value="{{ sort_by }}">
+                        <input type="hidden" name="scope" value="town">
+                        <input type="search" class="form-control" name="town" placeholder="Search for town/city..."
+                               aria-label="Search">
+                        <input type="submit" value="Search" class="btn btn-dark">
+                    </form>
+                </div>
+
+            </header>
+            <div class="overflow-auto bg-light-subtle shadow"
+                 style="max-height: 60vw;">
+                {% for prop in props[page | int * 20 | int : page | int * 20 | int +20 | int] %}
+                {% if loop.index0 % 2 == 0 %}
+                <div class="row">
+                    {% endif %}
+
+                    <div class="col-6 p-4">
+                        <div class="card card-cover text-bg-dark rounded-5 p-2" style="border: 2px solid #FFA500;">
+                            <h4 class="text-white text-center">{{ prop["city"] }}</h4>
+                            <div id="carousel{{ loop.index }}" class="carousel slide bg-dark"
+                                 data-bs-ride="carousel">
+                                <div class="carousel-indicators">
+                                    {% if prop["carouselPhotos"] is not none  %}
+                                    {% for url in prop["carouselPhotos"][:5] %}
+                                    <button type="button" data-bs-target="#carouselExampleIndicators"
+                                            data-bs-slide-to="{{ loop.index0 }}" {% if loop.first
+                                            %}class="active" {% endif %} aria-current="true"
+                                            aria-label="Slide {{ loop.index }}"></button>
+                                    {% endfor %}
+
+                                </div>
+                                <div class="carousel-inner">
+                                    {% for url in prop["carouselPhotos"][:5] %}
+                                    <div class="carousel-item  {% if loop.first %}active{% endif %}">
+                                        <img src="{{ url['url'] }}" class="d-block mx-auto" alt="..."
+                                             style="width:50%;">
+                                    </div>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <button class="carousel-control-prev" type="button"
+                                        data-bs-target="#carousel{{loop.index}}" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button"
+                                        data-bs-target="#carousel{{loop.index}}" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
+                            <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+
+                                <ul class="d-flex list-unstyled mt-auto">
+                                    <li class="d-flex align-items-center me-3">
+                                        <a href="http://maps.google.com/maps?z=12&t=k&q=loc:{{ prop['latitude'] }}+{{ prop['longitude'] }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="40"
+                                                 fill="White" class="bi bi-geo-alt m-1 hover-animate"
+                                                 viewBox="0 0 16 16">
+                                                <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+                                                <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                                            </svg>
+                                        </a>
+                                        <a href="{{ url_for('show_prop', photos=prop['carouselPhotos']) }}" class="">
+                                            <svg class="hover-animate" xmlns="http://www.w3.org/2000/svg" height="40"
+                                                 fill="white" class="bi bi-images" viewBox="0 0 16 16">
+                                                <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
+                                                <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2M14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1M2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1z"/>
+                                            </svg>
+                                        </a>
+
+                                    </li>
+                                    </br>
+                                    <li class="d-flex align-items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="30"
+                                             fill="currentColor" class="bi bi-currency-dollar" viewBox="0 0 16 16">
+                                            <path d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718zm3.391-3.836c-1.043-.263-1.6-.825-1.6-1.616 0-.944.704-1.641 1.8-1.828v3.495l-.2-.05zm1.591 1.872c1.287.323 1.852.859 1.852 1.769 0 1.097-.826 1.828-2.2 1.939V8.73z"/>
+                                        </svg>
+                                        <small class="mx-1">{{ prop["price"] }}</small>
+                                    </li>
+                                    </br>
+                                    <li class="d-flex align-items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="20"
+                                             fill="currentColor" class="bi bi-currency-dollar" viewBox="0 0 16 16">
+                                            <path d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718zm3.391-3.836c-1.043-.263-1.6-.825-1.6-1.616 0-.944.704-1.641 1.8-1.828v3.495l-.2-.05zm1.591 1.872c1.287.323 1.852.859 1.852 1.769 0 1.097-.826 1.828-2.2 1.939V8.73z"/>
+                                        </svg>
+                                        <small class="">${{ prop["price per square foot"] | int }} / sqrft</small>
+                                    </li>
+                                </ul>
+                                <p>
+                                    {{ prop["square-footage"] | int }} square feet
+                                    </br>
+                                    {% if prop['land_unit'] %}
+
+                                    {{ prop["land"] | round | int }} {{ prop["land_unit"] }} of land
+                                    </br>
+                                    {% endif %}
+                                    {{ prop['street-address'] }} {{ prop["zip"] }} {{ prop['state'] }}
+                                    </br>
+
+
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                    {% if loop.index0 %2 != 0 or loop.last %}
+                </div>
+                {% endif %}
+
+                {% endfor %}
+
+
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+
+
+{% endblock %}

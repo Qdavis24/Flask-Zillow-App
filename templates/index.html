@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "bootstrap/form.html" import render_form %}
+{% block styles %}
+<style>
+    .bg-house {
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./static/house.png');
+        background-size: cover;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<section class="bg-house ">
+    <div class="my-5">
+        <div class="p-5">
+            <div class="container py-5">
+                <h1 class="text-white text-center">
+                    Welcome to ValueHunter
+                </h1>
+                <div class="col-12 col-md-8 col-lg-6 mx-auto">
+                    <h2 class="text-white text-left h5">ValueHunter streamlines the home search process, enabling you to
+                    swiftly discover homes that perfectly match your requirements, eliminating the need for extensive
+                    online searches to find a great deal.</h2>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+{% block date %}
+{{date}}
+{% endblock %}

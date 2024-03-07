@@ -1,0 +1,7 @@
+*.pyc
+venv/
+.idea/
+db_uploader.py
+Jsons/
+instance/
+data-analytics/
