@@ -1,33 +1,65 @@
 {% extends "base.html" %}
 {% from "bootstrap/form.html" import render_form %}
 {% block styles %}
-<style>
-    .bg-house {
-        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./static/house.png');
-        background-size: cover;
-    }
-</style>
+    <style>
+        .bg-house {
+            background-image: linear-gradient(to bottom, #1a1a1a, #333333);
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
 {% endblock %}
 {% block content %}
-<section class="bg-house ">
-    <div class="my-5">
-        <div class="p-5">
-            <div class="container py-5">
-                <h1 class="text-white text-center">
-                    Welcome to ValueHunter
-                </h1>
-                <div class="col-12 col-md-8 col-lg-6 mx-auto">
-                    <h2 class="text-white text-left h5">ValueHunter streamlines the home search process, enabling you to
-                    swiftly discover homes that perfectly match your requirements, eliminating the need for extensive
-                    online searches to find a great deal.</h2>
-                </div>
+
+
+    <section class="">
+
+        <div class="position-relative overflow-hidden p-3 p-md-5  text-left bg-body-tertiary"
+             style="background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./static/interactive_map.png'); background-size:cover; background-position:center;">
+            <div class="col-md-6 p-lg-5 mx-auto my-5">
+                <h1 class="display-3 fw-bold text-white">Welcome to realty history</h1>
+                <h2 class="fw-normal text-white-50 mb-3">A real estate web app, designed to give the client
+                            a view into the history of the selling market in various locations within the US.</h2>
+                <h4 class="fw-normal text-white mb-3">Let's take a look, the first step is too select any state in the country
+                    on the interactive map.</h4>
 
             </div>
+            <div class="product-device shadow-sm d-none d-md-block"></div>
+            <div class="product-device product-device-2 shadow-sm d-none d-md-block"></div>
         </div>
-    </div>
-</section>
+
+        <div class="d-md-flex flex-md-equal  justify-content-center">
+            <div class="text-bg-dark me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-left overflow-hidden">
+                <div class="my-3 py-3">
+                    <h2 class="display-5"><u>Next</u> explore the data visually,</h2>
+                    <p class="lead">with an interactive heatmap, or scatter plot.</p>
+                </div>
+                <div class="bg-body-tertiary shadow-sm mx-auto"
+                     style="width: 80%; height: 300px; border-radius: 21px 21px 0 0; background-image: url('./static/heatmap.png'); background-size:cover; background-position:center;"></div>
+            </div>
+            <div class="bg-body-tertiary me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-left overflow-hidden">
+                <div class="my-3 p-3">
+                    <h2 class="display-4">Filter the displayed properties</h2>
+                    <p class="lead"></p>
+                </div>
+                <div class="bg-dark shadow-sm mx-auto mt-5"
+                     style="width: 80%; height: 300px; border-radius: 21px 21px 0 0; background-image: url('./static/filter.png'); background-size:cover; background-position:top;"></div>
+            </div>
+            <div class="bg-dark me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-left overflow-hidden">
+                <div class="my-3 py-3 mb-5">
+                    <h2 class="display-5 text-white">Search for individual towns</h2>
+
+                </div>
+                <div class="bg-dark shadow-sm mx-auto"
+                     style="width: 80%; height: 300px; border-radius: 21px 21px 0 0; background-image: url('./static/town.png'); background-size:cover; background-position:right;"></div>
+            </div>
+
+        </div>
+
+
+    </section>
 
 {% endblock %}
 {% block date %}
-{{date}}
+    {{ date }}
 {% endblock %}

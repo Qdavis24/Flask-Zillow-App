@@ -17,7 +17,6 @@ from data import DfWorker
 def config_app():
     app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DB_URI")
-
     app.config["SECRET_KEY"] = os.environ.get("APP_KEY")
     Bootstrap5(app)
     db.init_app(app)

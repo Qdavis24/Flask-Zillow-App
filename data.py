@@ -29,9 +29,6 @@ class DfWorker:
         return descending.to_json(orient='records')
 
     def heatmap(self):
-        viewport_width_js = """
-        Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
-        """
         geographical_heat_map = px.scatter_mapbox(self.df, lat="latitude", lon="longitude",
                                                   size="price per square foot",
                                                   color="price per square foot", mapbox_style='open-street-map',
